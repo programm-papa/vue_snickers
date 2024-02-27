@@ -1,9 +1,9 @@
 <script setup lang="ts">
-const helloWorld = 'Привет, мир'
+const helloWorld = 'Привет, мир';
 </script>
 
-<template>
-  {{ helloWorld }}
+<template class="test">
+    {{ helloWorld }}
 </template>
 
 <style scoped></style>
