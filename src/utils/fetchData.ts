@@ -3,6 +3,8 @@ import type { FetchMethod } from "@/types";
 
 //
 export default async function fetchData(method: FetchMethod, data: IFetchData) {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
     let patch = import.meta.env.VITE_API_URL + data.patch;
     if (data.params !== undefined) {
         const params = data.params;
@@ -20,6 +22,7 @@ export default async function fetchData(method: FetchMethod, data: IFetchData) {
         patch += paramsStr;
     }
     return fetch(patch, {
+        headers: myHeaders,
         method: method,
         body: data.body,
     })
