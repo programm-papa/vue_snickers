@@ -1,5 +1,5 @@
 import type IFetchData from "@/intefaces/IFetchData";
-import type { FetchMethod } from "@/types/FetchMethod";
+import type { FetchMethod } from "@/types";
 
 //
 export default async function fetchData(method: FetchMethod, data: IFetchData) {

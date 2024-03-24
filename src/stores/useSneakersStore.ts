@@ -1,5 +1,7 @@
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { defineStore } from "pinia";
+
+import type { SortTypes } from '@/types';
 
 import fetchData from '@/utils/fetchData';
 
@@ -7,10 +9,31 @@ import type ISneakersItem from "@/intefaces/ISneakersItem";
 import type ISneakersProduct from "@/intefaces/ISneakersProduct"
 
 export const useSneakersStore = defineStore('useSneakersStore', () => {
-    const listSneakersItems = ref<ISneakersProduct[]>([])
+    // Список кросовок
+    const listSneakersItems = ref<ISneakersProduct[]>([]);
+    // Сортировки товаров
+    const sortBy = ref<SortTypes>('title');
+    const searchQuery = ref<string>('');
+
+    const fetchParams = computed((): Record<string, number | string> => {
+        const params: Record<string, number | string> = {};
+        params.sortBy = sortBy.value;
+        if (searchQuery.value) {
+            params.title = `*${searchQuery.value}*`;
+        }
+        return params;
+    })
+
+    // Вотчеры изменения фильтров запроса
+    watch(searchQuery, () => {
+        fetchListSneakersItems();
+    })
+    watch(sortBy, () => {
+        fetchListSneakersItems();
+    })
 
     function fetchListSneakersItems() {
-        fetchData('GET', { patch: 'items/' })
+        fetchData('GET', { patch: 'items/', params: fetchParams.value })
             .then((response) => response.json())
             .then((data: ISneakersItem[]) => {
                 listSneakersItems.value = data.map((item) => {
@@ -42,6 +65,8 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
     }
     return {
         listSneakersItems,
+        sortBy,
+        searchQuery,
         fetchListSneakersItems,
     }
 })
