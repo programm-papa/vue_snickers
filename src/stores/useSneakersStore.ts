@@ -12,6 +12,7 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
     // Список кросовок
     const listSneakersItems = ref<Array<ISneakersProduct>>([]);
     const listFavoriteItemsId = ref<Array<number>>([]);
+    const listBasketAddedItemsId = ref<Array<number>>([]);
     // Сортировки товаров
     const sortBy = ref<SortTypes>('title');
     const searchQuery = ref<string>('');
@@ -23,6 +24,13 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
             params.title = `*${searchQuery.value}*`;
         }
         return params;
+    })
+
+    const listFavoriteItems = computed(() => {
+        return listSneakersItems.value.filter((element) => listFavoriteItemsId.value.includes(element.id))
+    })
+    const counterFavoriteItems = computed(() => {
+        return listFavoriteItems.value.length
     })
 
     // Работа с бд
@@ -75,6 +83,31 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
             })
     }
 
+    // Получение товаров корзины
+    const fetcBasketItems = () => {
+        fetchData('GET', { patch: 'basket/' })
+            .then((response) => response.json())
+            .then((data: Array<number>) => {
+                listBasketAddedItemsId.value = data;
+            }).catch(() => {
+                fetcBasketItems();
+            })
+    }
+
+    // Добавление товара в корзину
+    const addItemInBasket = (id: number): void => {
+        updateBasket(JSON.stringify([...listBasketAddedItemsId.value, id]));
+    }
+
+    const updateBasket = (body: string) => {
+        fetchData('PATCH', { patch: 'basket/', body })
+            .then((response) => response.json())
+            .then((data: number[]) => {
+                listBasketAddedItemsId.value = data;
+            }).catch(() => {
+                updateFavorites(body)
+            })
+    }
 
 
     // Вотчер изменения товаров фаворитов
@@ -96,8 +129,12 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
         sortBy,
         searchQuery,
         listFavoriteItemsId,
+        listFavoriteItems,
+        counterFavoriteItems,
         fetchListSneakersItems,
         addItemInFavorite,
         removeItemInFavorite,
+        addItemInBasket,
+        fetcBasketItems,
     }
 })
