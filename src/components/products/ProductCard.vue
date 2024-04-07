@@ -10,15 +10,15 @@ const { itemData } = defineProps<{ itemData: ISneakersProduct }>();
 <template>
     <div
         class="product-card relative flex flex-col items-center justify-center gap-3 rounded-3xl border border-gray-200 bg-white px-6 py-5 transition hover:-translate-y-2 hover:shadow-xl"
-        @click="
-            itemData.isFavorite
-                ? sneakersStore.removeItemInFavorite(itemData.id)
-                : sneakersStore.addItemInFavorite(itemData.id)
-        "
     >
         <img
             class="product-card__like absolute left-5 top-5 cursor-pointer rounded-lg hover:shadow-md"
             :src="itemData.isFavorite ? '/like-2.svg' : '/like-1.svg'"
+            @click="
+                itemData.isFavorite
+                    ? sneakersStore.removeItemInFavorite(itemData.id)
+                    : sneakersStore.addItemInFavorite(itemData.id)
+            "
         />
         <img class="product-card__img max-h-28" :src="itemData.imageUrl" :alt="itemData.title" />
         <p class="product-card__name text-sm font-normal">

@@ -1,13 +1,9 @@
-<template>
-  <div>
-
-  </div>
-</template>
-
 <script setup lang="ts">
-
+import AppCatalog from '@/components/catalog/AppCatalog.vue';
 </script>
 
-<style scoped>
+<template>
+    <app-catalog />
+</template>
 
-</style>
+<style scoped></style>

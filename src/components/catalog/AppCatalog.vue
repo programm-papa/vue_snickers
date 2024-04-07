@@ -4,6 +4,7 @@ import type { SortTypes } from '@/types';
 
 import { useSneakersStore } from '@/stores';
 
+import CatalogBlockHeader from '@/components/ui/CatalogBlockHeader.vue';
 import ProductList from '@/components/products/ProductList.vue';
 import AppInput from '@/components/ui/AppInput.vue';
 import AppSelect from '@/components/ui/AppSelect.vue';
@@ -14,7 +15,7 @@ const listSortTypes = ref<Record<SortTypes, string>>({ price: 'по цене', t
 </script>
 
 <template>
-    <div class="catalog-header flex items-center gap-6 px-11 py-5">
+    <catalog-block-header>
         <div class="catalog-header__title text-4xl font-bold">Все кросовки</div>
         <app-select
             v-model:selected="sneakersStore.sortBy"
@@ -25,12 +26,8 @@ const listSortTypes = ref<Record<SortTypes, string>>({ price: 'по цене', t
             @searchInput="(searchValue) => (sneakersStore.searchQuery = searchValue)"
             class="catalog-header__search"
         />
-    </div>
-    <div
-        class="catalog-list grid grid-cols-4 gap-10 px-11 py-3 max-lg:grid-cols-2 max-sm:grid-cols-1"
-    >
-        <product-list />
-    </div>
+    </catalog-block-header>
+    <product-list :productList="sneakersStore.listSneakersItems" />
 </template>
 
 <style scoped></style>
