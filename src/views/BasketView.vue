@@ -15,9 +15,9 @@ const sneakersStore = useSneakersStore();
         <go-back-button />
         <div class="catalog-header__title text-4xl font-bold">Мои покупки</div>
     </catalog-block-header>
-    <template v-if="sneakersStore.counterFavoriteItems">
+    <template v-if="sneakersStore.getCounterFavoriteItems">
         <router-link :to="'/'" />
-        <product-list :productList="sneakersStore.listFavoriteItems" />
+        <product-list :productList="sneakersStore.getListFavoriteItems" />
     </template>
     <template v-else>
         <blank-plug>

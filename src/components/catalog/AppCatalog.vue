@@ -27,7 +27,7 @@ const listSortTypes = ref<Record<SortTypes, string>>({ price: 'по цене', t
             class="catalog-header__search"
         />
     </catalog-block-header>
-    <product-list :productList="sneakersStore.listSneakersItems" />
+    <product-list :productList="sneakersStore.getListSneakersItems" />
 </template>
 
 <style scoped></style>

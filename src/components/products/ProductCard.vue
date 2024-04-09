@@ -30,8 +30,13 @@ const { itemData } = defineProps<{ itemData: ISneakersProduct }>();
                 <p class="text-sm font-bold">{{ itemData.price }} руб</p>
             </div>
             <img
-                class="product-card__add-to-cart cursor-pointer rounded-lg hover:shadow-md"
+                class="product-card__add-to-cart cursor-pointer rounded-lg hover:border-gray-200 hover:shadow-md"
                 :src="`/${itemData.isAdded ? 'checked.svg' : 'plus.svg'}`"
+                @click="
+                    itemData.isAdded
+                        ? sneakersStore.removeItemInBasket(itemData.id)
+                        : sneakersStore.addItemInBasket(itemData.id)
+                "
             />
         </div>
     </div>

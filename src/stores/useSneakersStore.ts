@@ -1,3 +1,21 @@
+/*
+В данном примере кода используется Map а не массив 
+(как изначально я реализовывал данную логику, коммит b86149883b70e4a31fcf0fec628873c00671dfac)
+по причинам:
+1) Спецификация говорит нам: "Объект Map должен быть реализован либо с использованием хеш-таблиц, либо с
+применением других механизмов, которые, в среднем, обеспечивают доступ к элементам коллекции за сублинейное время."
+Однако для в реализации Map (конкретно для V8) используются детерминированные хеш-таблицы, что дает нам временную
+сложность в O(1) на чтение и запись и O(n) на перехеширование.
+
+2) Демонстрация понимания работы с Map в JS
+
+3) Более удобный доступ к элементам по ключу (как вариант, можно было написать реализацию
+с использованием объекта и работа с ним,
+однако выбрана была Map именно для демонстрации понимания работы с ней)
+
+4) Тест работы Map в Vue
+*/
+
 import { computed, ref, watch } from 'vue'
 import { defineStore } from "pinia";
 
@@ -10,7 +28,7 @@ import type ISneakersProduct from "@/intefaces/ISneakersProduct"
 
 export const useSneakersStore = defineStore('useSneakersStore', () => {
     // Список кросовок
-    const listSneakersItems = ref<Array<ISneakersProduct>>([]);
+    const mapSneakersItems = ref<Map<number, ISneakersProduct>>(new Map());
     const listFavoriteItemsId = ref<Array<number>>([]);
     const listBasketAddedItemsId = ref<Array<number>>([]);
     // Сортировки товаров
@@ -26,11 +44,35 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
         return params;
     })
 
-    const listFavoriteItems = computed(() => {
-        return listSneakersItems.value.filter((element) => listFavoriteItemsId.value.includes(element.id))
+    const getListFavoriteItems = computed(() => {
+        return listFavoriteItemsId.value.reduce<Array<ISneakersProduct>>(
+            (result: Array<ISneakersProduct>, currentId: number): Array<ISneakersProduct> => {
+                if (mapSneakersItems.value.has(currentId)) {
+                    return [...result, mapSneakersItems.value.get(currentId) as ISneakersProduct];
+                }
+                return result
+            },
+            [] as Array<ISneakersProduct>)
     })
-    const counterFavoriteItems = computed(() => {
-        return listFavoriteItems.value.length
+
+    const getListBasketAddedItems = computed(() => {
+        return listBasketAddedItemsId.value.reduce<Array<ISneakersProduct>>(
+            (result: Array<ISneakersProduct>, currentId: number): Array<ISneakersProduct> => {
+                if (mapSneakersItems.value.has(currentId)) {
+                    return [...result, mapSneakersItems.value.get(currentId) as ISneakersProduct];
+                }
+                return result
+            },
+            [] as Array<ISneakersProduct>)
+    })
+
+
+    const getCounterFavoriteItems = computed(() => {
+        return getListFavoriteItems.value.length
+    })
+
+    const getListSneakersItems = computed(() => {
+        return Array.from(mapSneakersItems.value.values());
     })
 
     // Работа с бд
@@ -39,15 +81,17 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
         fetchData('GET', { patch: 'items/', params: fetchParams.value })
             .then((response) => response.json())
             .then((data: Array<ISneakersItem>) => {
-                listSneakersItems.value = data.map((item) => {
-                    return {
+                mapSneakersItems.value = new Map(data.map((item) => {
+                    return [item.id,
+                    {
                         ...item,
                         isFavorite: false,
                         isAdded: false
-                    }
-                })
+                    }]
+                }))
             }).then(() => {
                 fetchListFavoriteSneakersItems();
+                fetcBasketItems();
             }).catch(() => {
                 fetchListSneakersItems();
             })
@@ -71,6 +115,9 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
 
     const removeItemInFavorite = (id: number): void => {
         updateFavorites(JSON.stringify(listFavoriteItemsId.value.filter((itemId) => itemId !== id)))
+        const updatedItem: ISneakersProduct = mapSneakersItems.value.get(id) as ISneakersProduct
+        updatedItem.isFavorite = false;
+        mapSneakersItems.value.set(id, updatedItem);
     }
 
     const updateFavorites = (body: string) => {
@@ -99,6 +146,13 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
         updateBasket(JSON.stringify([...listBasketAddedItemsId.value, id]));
     }
 
+    const removeItemInBasket = (id: number): void => {
+        updateBasket(JSON.stringify(listBasketAddedItemsId.value.filter((itemId) => itemId !== id)))
+        const updatedItem: ISneakersProduct = mapSneakersItems.value.get(id) as ISneakersProduct
+        updatedItem.isAdded = false;
+        mapSneakersItems.value.set(id, updatedItem);
+    }
+
     const updateBasket = (body: string) => {
         fetchData('PATCH', { patch: 'basket/', body })
             .then((response) => response.json())
@@ -109,14 +163,26 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
             })
     }
 
-
-    // Вотчер изменения товаров фаворитов
+    // // Вотчер изменения товаров фаворитов
     watch(listFavoriteItemsId, (listFavorite) => {
-        listSneakersItems.value.forEach((item) => {
-            item.isFavorite = listFavorite.includes(item.id);
+        listFavorite.forEach((favoriteItemId) => {
+            if (mapSneakersItems.value.has(favoriteItemId)) {
+                const updatedSneakersProduct: ISneakersProduct = mapSneakersItems.value.get(favoriteItemId) as ISneakersProduct;
+                updatedSneakersProduct.isFavorite = true;
+                mapSneakersItems.value.set(favoriteItemId, updatedSneakersProduct)
+            }
         })
     })
-
+    // Вотчер изменения товаров корзины
+    watch(listBasketAddedItemsId, (listBasket) => {
+        listBasket.forEach((basketItemId) => {
+            if (mapSneakersItems.value.has(basketItemId)) {
+                const updatedSneakersProduct: ISneakersProduct = mapSneakersItems.value.get(basketItemId) as ISneakersProduct;
+                updatedSneakersProduct.isAdded = true;
+                mapSneakersItems.value.set(basketItemId, updatedSneakersProduct)
+            }
+        })
+    })
     // Вотчеры изменения фильтров запроса
     watch(searchQuery, () => {
         fetchListSneakersItems();
@@ -124,17 +190,21 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
     watch(sortBy, () => {
         fetchListSneakersItems();
     })
+
     return {
-        listSneakersItems,
+        getListSneakersItems,
+        getListFavoriteItems,
+        getCounterFavoriteItems,
+        getListBasketAddedItems,
+        // Фильтры
         sortBy,
         searchQuery,
-        listFavoriteItemsId,
-        listFavoriteItems,
-        counterFavoriteItems,
+        // Методы
         fetchListSneakersItems,
         addItemInFavorite,
         removeItemInFavorite,
         addItemInBasket,
+        removeItemInBasket,
         fetcBasketItems,
     }
 })
