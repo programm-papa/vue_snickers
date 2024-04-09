@@ -8,7 +8,8 @@ const cartMenuInfo = {
     description: 'Корзина',
     icon: '/cart.svg',
     activeIcon: '/cart-filled.svg',
-    status: false
+    status: false,
+    to: '/basket'
 };
 
 const likesMenuInfo = {
@@ -16,7 +17,8 @@ const likesMenuInfo = {
     description: 'Закладки',
     icon: '/heart.svg',
     activeIcon: '/heart.svg',
-    status: false
+    status: false,
+    to: '/favorites'
 };
 
 const profileMenuInfo = {
@@ -24,7 +26,8 @@ const profileMenuInfo = {
     description: 'Профиль',
     icon: '/profile.svg',
     activeIcon: '/profile.svg',
-    status: false
+    status: false,
+    to: '/'
 };
 </script>
 

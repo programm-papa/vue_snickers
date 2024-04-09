@@ -6,6 +6,7 @@ interface INavItevProps {
         icon: string;
         activeIcon: string;
         status: boolean;
+        to: string;
     };
 }
 
@@ -13,10 +14,10 @@ defineProps<INavItevProps>();
 </script>
 
 <template>
-    <div class="header-nav-item flex cursor-pointer items-center gap-2">
+    <RouterLink :to="navItemData.to" class="header-nav-item flex cursor-pointer items-center gap-2">
         <img :src="navItemData.status ? navItemData.activeIcon : navItemData.icon" alt="" class="header-nav-item__icon" />
         <p class="header-nav-item__description">{{ navItemData.description }}</p>
-    </div>
+    </RouterLink>
 </template>
 
 <style scoped></style>

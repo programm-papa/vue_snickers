@@ -13,11 +13,11 @@ const sneakersStore = useSneakersStore();
 <template>
     <catalog-block-header>
         <go-back-button />
-        <div class="catalog-header__title text-4xl font-bold">Мои покупки</div>
+        <div class="catalog-header__title text-4xl font-bold">Моя корзина</div>
     </catalog-block-header>
-    <template v-if="sneakersStore.getCounterFavoriteItems">
+    <template v-if="sneakersStore.getListBasketAddedItems.length">
         <router-link :to="'/'" />
-        <product-list :productList="sneakersStore.getListFavoriteItems" />
+        <product-list :productList="sneakersStore.getListBasketAddedItems" />
     </template>
     <template v-else>
         <blank-plug>
