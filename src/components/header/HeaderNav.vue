@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import NavItem from '@/components/header/NavItem.vue';
 
+//TODO: Не оставляй то, что не используешь
 import { reactive } from 'vue';
 
 const cartMenuInfo = {
@@ -33,6 +34,7 @@ const profileMenuInfo = {
 
 <template>
     <div class="header-nav flex gap-8">
+        <!--TODO: я обычно то что повторяетс больше 2 раз, делаю через v-for-->
         <NavItem :nav-item-data="cartMenuInfo"/>
         <NavItem :nav-item-data="likesMenuInfo"/>
         <NavItem :nav-item-data="profileMenuInfo"/>

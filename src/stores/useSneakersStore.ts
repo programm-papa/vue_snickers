@@ -1,5 +1,5 @@
 /*
-В данном примере кода используется Map а не массив 
+В данном примере кода используется Map а не массив
 (как изначально я реализовывал данную логику, коммит b86149883b70e4a31fcf0fec628873c00671dfac)
 по причинам:
 1) Спецификация говорит нам: "Объект Map должен быть реализован либо с использованием хеш-таблиц, либо с
@@ -26,6 +26,9 @@ import fetchData from '@/utils/fetchData';
 import type ISneakersItem from "@/intefaces/ISneakersItem";
 import type ISneakersProduct from "@/intefaces/ISneakersProduct"
 
+// TODO: тут так же лучше разделять код отсупами, чтобы читалось лучше
+// TODO: + типизировать явно
+
 export const useSneakersStore = defineStore('useSneakersStore', () => {
     // Список кросовок
     const mapSneakersItems = ref<Map<number, ISneakersProduct>>(new Map());
@@ -45,6 +48,7 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
     })
 
     const getListFavoriteItems = computed(() => {
+        // TODO: тут можно без return, так как у тебя стрелочная функция
         return listFavoriteItemsId.value.reduce<Array<ISneakersProduct>>(
             (result: Array<ISneakersProduct>, currentId: number): Array<ISneakersProduct> => {
                 if (mapSneakersItems.value.has(currentId)) {
@@ -68,6 +72,7 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
 
 
     const getCounterFavoriteItems = computed(() => {
+        // TODO: тут можно без return, так как у тебя стрелочная функция
         return getListFavoriteItems.value.length
     })
 
