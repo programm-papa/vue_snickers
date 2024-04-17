@@ -1,43 +1,38 @@
 <script setup lang="ts">
 import NavItem from '@/components/header/NavItem.vue';
 
-//TODO: Не оставляй то, что не используешь
-import { reactive } from 'vue';
-
-const cartMenuInfo = {
+const listNavLinks = [
+{
     name: 'cart',
     description: 'Корзина',
     icon: '/cart.svg',
     activeIcon: '/cart-filled.svg',
     status: false,
     to: '/basket'
-};
-
-const likesMenuInfo = {
-    name: 'cart',
+},
+{
+    name: 'bookmarks',
     description: 'Закладки',
     icon: '/heart.svg',
     activeIcon: '/heart.svg',
     status: false,
     to: '/favorites'
-};
-
-const profileMenuInfo = {
-    name: 'cart',
+},
+{
+    name: 'profile',
     description: 'Профиль',
     icon: '/profile.svg',
     activeIcon: '/profile.svg',
     status: false,
     to: '/'
-};
+}
+]
+
 </script>
 
 <template>
     <div class="header-nav flex gap-8">
-        <!--TODO: я обычно то что повторяетс больше 2 раз, делаю через v-for-->
-        <NavItem :nav-item-data="cartMenuInfo"/>
-        <NavItem :nav-item-data="likesMenuInfo"/>
-        <NavItem :nav-item-data="profileMenuInfo"/>
+        <NavItem v-for="navLink in listNavLinks" :key="navLink.name" :nav-item-data="navLink" />
     </div>
 </template>
 

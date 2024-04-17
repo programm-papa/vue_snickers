@@ -5,10 +5,12 @@ import type { FetchMethod } from "@/types";
 // TODO: типизируй, что возвращается функция (и вообще по максимуму типизируй)
 // TODO: советую использовать JSDoc / TSDoc для того чтобы кратко описывать утилиты/классы/сторы и сложные участки кода
 // TODO: в целом этот метод бы я переписал, попробовал бы более универсаальным сделать + параметры по другому добавлял бы (более подробно могу рассказть)
-export default async function fetchData(method: FetchMethod, data: IFetchData) {
+// Q?: Интересен твой подход, как бы ты такое реализовывал
+export default async function fetchData(method: FetchMethod, data: IFetchData): Promise<Response> {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     let patch = import.meta.env.VITE_API_URL + data.patch;
+
     if (data.params !== undefined) {
         const params = data.params;
         let paramsStr = '';
@@ -24,6 +26,7 @@ export default async function fetchData(method: FetchMethod, data: IFetchData) {
         })
         patch += paramsStr;
     }
+
     return fetch(patch, {
         headers: myHeaders,
         method: method,

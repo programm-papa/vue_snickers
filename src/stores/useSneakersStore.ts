@@ -28,6 +28,7 @@ import type ISneakersProduct from "@/intefaces/ISneakersProduct"
 
 // TODO: тут так же лучше разделять код отсупами, чтобы читалось лучше
 // TODO: + типизировать явно
+// Q?: Можешь рассказать по поводу явной типизации, ты имеешь ввиду указывать тип на переменную? 
 
 export const useSneakersStore = defineStore('useSneakersStore', () => {
     // Список кросовок
@@ -47,17 +48,15 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
         return params;
     })
 
-    const getListFavoriteItems = computed(() => {
-        // TODO: тут можно без return, так как у тебя стрелочная функция
-        return listFavoriteItemsId.value.reduce<Array<ISneakersProduct>>(
-            (result: Array<ISneakersProduct>, currentId: number): Array<ISneakersProduct> => {
-                if (mapSneakersItems.value.has(currentId)) {
-                    return [...result, mapSneakersItems.value.get(currentId) as ISneakersProduct];
-                }
-                return result
-            },
-            [] as Array<ISneakersProduct>)
-    })
+    const getListFavoriteItems = computed(() => listFavoriteItemsId.value.reduce<Array<ISneakersProduct>>(
+        (result: Array<ISneakersProduct>, currentId: number): Array<ISneakersProduct> => {
+            if (mapSneakersItems.value.has(currentId)) {
+                return [...result, mapSneakersItems.value.get(currentId) as ISneakersProduct];
+            }
+            return result
+        },
+        [] as Array<ISneakersProduct>)
+    )
 
     const getListBasketAddedItems = computed(() => {
         return listBasketAddedItemsId.value.reduce<Array<ISneakersProduct>>(
@@ -71,10 +70,7 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
     })
 
 
-    const getCounterFavoriteItems = computed(() => {
-        // TODO: тут можно без return, так как у тебя стрелочная функция
-        return getListFavoriteItems.value.length
-    })
+    const getCounterFavoriteItems = computed(() => getListFavoriteItems.value.length)
 
     const getListSneakersItems = computed(() => {
         return Array.from(mapSneakersItems.value.values());
