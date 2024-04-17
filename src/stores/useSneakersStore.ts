@@ -1,5 +1,5 @@
 /*
-В данном примере кода используется Map а не массив 
+В данном примере кода используется Map а не массив
 (как изначально я реализовывал данную логику, коммит b86149883b70e4a31fcf0fec628873c00671dfac)
 по причинам:
 1) Спецификация говорит нам: "Объект Map должен быть реализован либо с использованием хеш-таблиц, либо с
@@ -26,6 +26,10 @@ import fetchData from '@/utils/fetchData';
 import type ISneakersItem from "@/intefaces/ISneakersItem";
 import type ISneakersProduct from "@/intefaces/ISneakersProduct"
 
+// TODO: тут так же лучше разделять код отсупами, чтобы читалось лучше
+// TODO: + типизировать явно
+// Q?: Можешь рассказать по поводу явной типизации, ты имеешь ввиду указывать тип на переменную? 
+
 export const useSneakersStore = defineStore('useSneakersStore', () => {
     // Список кросовок
     const mapSneakersItems = ref<Map<number, ISneakersProduct>>(new Map());
@@ -44,16 +48,15 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
         return params;
     })
 
-    const getListFavoriteItems = computed(() => {
-        return listFavoriteItemsId.value.reduce<Array<ISneakersProduct>>(
-            (result: Array<ISneakersProduct>, currentId: number): Array<ISneakersProduct> => {
-                if (mapSneakersItems.value.has(currentId)) {
-                    return [...result, mapSneakersItems.value.get(currentId) as ISneakersProduct];
-                }
-                return result
-            },
-            [] as Array<ISneakersProduct>)
-    })
+    const getListFavoriteItems = computed(() => listFavoriteItemsId.value.reduce<Array<ISneakersProduct>>(
+        (result: Array<ISneakersProduct>, currentId: number): Array<ISneakersProduct> => {
+            if (mapSneakersItems.value.has(currentId)) {
+                return [...result, mapSneakersItems.value.get(currentId) as ISneakersProduct];
+            }
+            return result
+        },
+        [] as Array<ISneakersProduct>)
+    )
 
     const getListBasketAddedItems = computed(() => {
         return listBasketAddedItemsId.value.reduce<Array<ISneakersProduct>>(
@@ -67,9 +70,7 @@ export const useSneakersStore = defineStore('useSneakersStore', () => {
     })
 
 
-    const getCounterFavoriteItems = computed(() => {
-        return getListFavoriteItems.value.length
-    })
+    const getCounterFavoriteItems = computed(() => getListFavoriteItems.value.length)
 
     const getListSneakersItems = computed(() => {
         return Array.from(mapSneakersItems.value.values());

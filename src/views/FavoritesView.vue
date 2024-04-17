@@ -16,6 +16,8 @@ const sneakersStore = useSneakersStore();
         <div class="catalog-header__title text-4xl font-bold">Мои закладки</div>
     </catalog-block-header>
 
+    <!--TODO: не понял зачем тут template-->
+    <!--Q?: я использовал его, для обертки в одно условие нескольких компонентов без создания лишнего узла-->
     <template v-if="sneakersStore.getCounterFavoriteItems">
         <router-link :to="'/'" />
         <product-list :productList="sneakersStore.getListFavoriteItems" />
