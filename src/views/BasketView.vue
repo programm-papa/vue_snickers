@@ -2,7 +2,7 @@
 import { useSneakersStore } from '@/stores';
 import { RouterLink } from 'vue-router';
 
-// TODO: Лучше делать больше алиасов, например: "@ui" (более подробно могу рассказть)
+// TODO: Лучше делать больше алиасов, например: "@ui" 
 import CatalogBlockHeader from '@/components/ui/CatalogBlockHeader.vue';
 import GoBackButton from '@/components/ui/GoBackButton.vue';
 import ProductList from '@/components/products/ProductList.vue';
